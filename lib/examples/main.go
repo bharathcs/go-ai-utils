@@ -10,10 +10,8 @@ import (
 )
 
 type SciFiBook struct {
-	Title         string `json:"title"`
-	Author        string `json:"author"`
-	YearPublished int    `json:"year_published"`
-	ShortSummary  string `json:"short_summary"`
+	Title  string `json:"title"`
+	Author string `json:"author"`
 }
 
 type SciFiBooks struct {
@@ -81,7 +79,7 @@ func main() {
 	var sciFiBooks SciFiBooks
 	err = ai.StructuredQueryFromEnv(
 		ctx,
-		"Recommend 3 classic science fiction books to read. Include title, author, year published, and a short summary.",
+		"Recommend 3 classic science fiction books to read. List title & author.",
 		"You are a helpful assistant that provides book recommendations.",
 		&sciFiBooks,
 	)
@@ -95,8 +93,8 @@ func main() {
 		// You can also access individual fields
 		fmt.Printf("Found %d books:\n", len(sciFiBooks.Books))
 		for i, book := range sciFiBooks.Books {
-			fmt.Printf("%d. %s by %s (%d)\n   %s\n",
-				i+1, book.Title, book.Author, book.YearPublished, book.ShortSummary)
+			fmt.Printf("%d. %s by %s\n",
+				i+1, book.Title, book.Author)
 		}
 	}
 }

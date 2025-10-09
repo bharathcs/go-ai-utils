@@ -51,7 +51,16 @@ func NewClientFromEnv() (*openai.Client, *Config, error) {
 		return nil, nil, fmt.Errorf("OPENAI_API_KEY environment variable is required")
 	}
 
-	client := openai.NewClient(option.WithAPIKey(apiKey))
+	// Get base URL from environment or use default
+	baseURL := os.Getenv("OPENAI_BASE_URL")
+	if baseURL == "" {
+		baseURL = "https://api.openai.com/v1"
+	}
+
+	client := openai.NewClient(
+		option.WithAPIKey(apiKey),
+		option.WithBaseURL(baseURL),
+	)
 	config := DefaultConfig()
 
 	// Override defaults with environment variables if set

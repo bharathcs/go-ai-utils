@@ -58,6 +58,60 @@ func TestNewClientFromEnv_CustomModel(t *testing.T) {
 	}
 }
 
+func TestNewClientFromEnv_DefaultBaseURL(t *testing.T) {
+	oldKey := os.Getenv("OPENAI_API_KEY")
+	oldBaseURL := os.Getenv("OPENAI_BASE_URL")
+
+	os.Setenv("OPENAI_API_KEY", "test-key")
+	os.Unsetenv("OPENAI_BASE_URL")
+
+	defer func() {
+		os.Setenv("OPENAI_API_KEY", oldKey)
+		if oldBaseURL != "" {
+			os.Setenv("OPENAI_BASE_URL", oldBaseURL)
+		}
+	}()
+
+	client, _, err := NewClientFromEnv()
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if client == nil {
+		t.Error("Expected non-nil client")
+	}
+	// Note: The actual base URL is internal to the client,
+	// but we verify it doesn't error with default
+}
+
+func TestNewClientFromEnv_CustomBaseURL(t *testing.T) {
+	oldKey := os.Getenv("OPENAI_API_KEY")
+	oldBaseURL := os.Getenv("OPENAI_BASE_URL")
+
+	os.Setenv("OPENAI_API_KEY", "test-key")
+	os.Setenv("OPENAI_BASE_URL", "https://custom.api.com/v1")
+
+	defer func() {
+		os.Setenv("OPENAI_API_KEY", oldKey)
+		if oldBaseURL != "" {
+			os.Setenv("OPENAI_BASE_URL", oldBaseURL)
+		} else {
+			os.Unsetenv("OPENAI_BASE_URL")
+		}
+	}()
+
+	client, _, err := NewClientFromEnv()
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if client == nil {
+		t.Error("Expected non-nil client")
+	}
+	// Note: The actual base URL is internal to the client,
+	// but we verify it doesn't error with custom base URL
+}
+
 func TestGenerateJSONSchema_SimpleStruct(t *testing.T) {
 	type TestStruct struct {
 		Name  string  `json:"name"`

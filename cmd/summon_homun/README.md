@@ -69,8 +69,9 @@ The application will guide you through:
 3. **Branch Input** - Asks for a branch name (validates alphanumeric + hyphen/underscore)
 4. **Directory Setup** - Creates `.homun/branches/$BRANCH/{workspace,report}` directories
 5. **Permissions** - Sets ownership to `$USER:homun` with group permissions
-6. **Confirmation** - Shows configuration summary and asks for confirmation (y/n)
-7. **Execution** - Runs Docker container with live timer
+6. **Edit Instructions** - Multiline editor for `report/instructions.md` (creates default template if not present)
+7. **Confirmation** - Shows configuration summary and asks for confirmation (y/n)
+8. **Execution** - Runs Docker container with live timer
 
 ## Directory Structure
 
@@ -111,7 +112,9 @@ docker run -it --rm \
 - **Backspace** - Delete character
 - **y** - Confirm at confirmation screen
 - **n** - Decline at confirmation screen
-- **Ctrl+C** or **ESC** - Exit application
+- **Ctrl+S** - Save instructions and continue (in instruction editor)
+- **Ctrl+C** - Exit application
+- **ESC** - Exit application (or blur textarea in instruction editor)
 
 ## Error Handling
 

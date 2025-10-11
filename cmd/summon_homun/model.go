@@ -46,6 +46,9 @@ type model struct {
 	validationErr    string
 	textarea         textarea.Model
 	instructionsPath string
+	dockerOutput     []string
+	terminalHeight   int
+	terminalWidth    int
 }
 
 func initialModel() model {

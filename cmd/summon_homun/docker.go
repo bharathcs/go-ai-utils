@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -24,6 +26,21 @@ func checkDockerImage(imageName string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+type dockerOutputMsg struct {
+	line   string
+	closed bool
+}
+
+func waitForOutput(sub <-chan string) tea.Cmd {
+	return func() tea.Msg {
+		line, ok := <-sub
+		if !ok {
+			return dockerOutputMsg{closed: true}
+		}
+		return dockerOutputMsg{line: line, closed: false}
+	}
 }
 
 func runDocker(m model) tea.Cmd {
@@ -54,6 +71,7 @@ func runDocker(m model) tea.Cmd {
 			"-e", "HOMUNCULUS_GH_API_KEY",
 			"-e", fmt.Sprintf("HOMUNCULUS_REPO_URL=%s", repoURL),
 			"-e", fmt.Sprintf("HOMUNCULUS_REPO=%s", repo),
+			"-e", fmt.Sprintf("HOMUNCULUS_BRANCH=%s", m.branch),
 			"-e", "HOMUNCULUS_SSH_KEY_PRIVATE",
 			"-e", "HOMUNCULUS_SSH_KEY_PUBLIC",
 			"-v", fmt.Sprintf("%s:/workspace", workspacePath),
@@ -64,13 +82,69 @@ func runDocker(m model) tea.Cmd {
 		)
 
 		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
 
-		if err := cmd.Run(); err != nil {
-			return dockerRunMsg{err: err}
+		// Create pipes for stdout and stderr
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			return dockerRunMsg{err: fmt.Errorf("failed to create stdout pipe: %w", err)}
 		}
+
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			return dockerRunMsg{err: fmt.Errorf("failed to create stderr pipe: %w", err)}
+		}
+
+		// Start the command
+		if err := cmd.Start(); err != nil {
+			return dockerRunMsg{err: fmt.Errorf("failed to start docker: %w", err)}
+		}
+
+		// Create channel for output
+		outputChan := make(chan string, 100)
+
+		var wg sync.WaitGroup
+		wg.Add(2)
+
+		// Read from stdout
+		go func() {
+			defer wg.Done()
+			scanner := bufio.NewScanner(stdout)
+			for scanner.Scan() {
+				outputChan <- scanner.Text()
+			}
+		}()
+
+		// Read from stderr
+		go func() {
+			defer wg.Done()
+			scanner := bufio.NewScanner(stderr)
+			for scanner.Scan() {
+				outputChan <- scanner.Text()
+			}
+		}()
+
+		// Wait for command to complete and close channel
+		go func() {
+			wg.Wait()
+			cmd.Wait()
+			close(outputChan)
+		}()
+
+		// Store the channel in the global output map
+		dockerOutputChannels[m.branch] = outputChan
 
 		return dockerRunMsg{err: nil}
 	}
+}
+
+// Global map to store output channels per branch
+var (
+	dockerOutputChannels = make(map[string]chan string)
+	dockerOutputMutex    sync.RWMutex
+)
+
+func getOutputChannel(branch string) <-chan string {
+	dockerOutputMutex.RLock()
+	defer dockerOutputMutex.RUnlock()
+	return dockerOutputChannels[branch]
 }

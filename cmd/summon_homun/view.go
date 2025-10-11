@@ -74,11 +74,51 @@ func (m model) View() string {
 		b.WriteString(warningStyle.Render("Ready to summon Homunculus. Continue? (y/n): "))
 
 	case StateRunning:
-		b.WriteString(successStyle.Render("Running Homunculus..."))
-		b.WriteString("\n\n")
-		b.WriteString(infoStyle.Render(fmt.Sprintf("Elapsed time: %d seconds", int(m.elapsed.Seconds()))))
+		// Split the view into two sections: logs (top) and status (bottom)
+		statusHeight := 4 // Height reserved for status bar at bottom
+		logsHeight := m.terminalHeight - statusHeight - 10 // Reserve space for header
+
+		if logsHeight < 5 {
+			logsHeight = 5
+		}
+
+		// Render logs section
+		logLines := m.dockerOutput
+		visibleLines := logsHeight
+		startIdx := 0
+		if len(logLines) > visibleLines {
+			startIdx = len(logLines) - visibleLines
+		}
+
+		logsContent := ""
+		for i := startIdx; i < len(logLines); i++ {
+			logsContent += logLines[i] + "\n"
+		}
+
+		// Create a bordered box for logs
+		logStyle := lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("62")).
+			Padding(0, 1).
+			Height(logsHeight).
+			Width(m.terminalWidth - 4)
+
+		b.WriteString(logStyle.Render(logsContent))
 		b.WriteString("\n")
-		b.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Render("Press Ctrl+C to cancel"))
+
+		// Render status section at the bottom
+		statusStyle := lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("205")).
+			Padding(0, 1).
+			Width(m.terminalWidth - 4)
+
+		statusContent := fmt.Sprintf("%s\n%s",
+			successStyle.Render(fmt.Sprintf("Running Homunculus... Elapsed: %d seconds", int(m.elapsed.Seconds()))),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Render("Press Ctrl+C to cancel"),
+		)
+
+		b.WriteString(statusStyle.Render(statusContent))
 
 	case StateDone:
 		if m.err != nil {

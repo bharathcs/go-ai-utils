@@ -45,6 +45,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.terminalHeight = msg.Height
+		m.terminalWidth = msg.Width
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
@@ -81,11 +85,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.advanceFromValidation()
 
 	case dockerRunMsg:
-		m.state = StateDone
 		if msg.err != nil {
+			m.state = StateDone
 			m.err = msg.err
+			return m, tea.Quit
 		}
-		return m, tea.Quit
+		// Docker started, now wait for output
+		outputChan := getOutputChannel(m.branch)
+		if outputChan != nil {
+			return m, waitForOutput(outputChan)
+		}
+		return m, nil
+
+	case dockerOutputMsg:
+		if msg.closed {
+			// Docker process finished
+			m.state = StateDone
+			return m, tea.Quit
+		}
+		if msg.line != "" {
+			m.dockerOutput = append(m.dockerOutput, msg.line)
+			// Keep only the last 1000 lines to avoid memory issues
+			if len(m.dockerOutput) > 1000 {
+				m.dockerOutput = m.dockerOutput[len(m.dockerOutput)-1000:]
+			}
+		}
+		// Continue listening for more output
+		outputChan := getOutputChannel(m.branch)
+		if outputChan != nil {
+			return m, waitForOutput(outputChan)
+		}
+		return m, nil
 
 	case timerTickMsg:
 		if m.state == StateRunning {

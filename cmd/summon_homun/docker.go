@@ -51,6 +51,7 @@ func runDocker(m model) tea.Cmd {
 			"--cap-add=NET_RAW",
 			"-e", "ANTHROPIC_API_KEY",
 			"-e", "HOMUNCULUS_GITEA_API_KEY",
+			"-e", "HOMUNCULUS_GH_API_KEY",
 			"-e", fmt.Sprintf("HOMUNCULUS_REPO_URL=%s", repoURL),
 			"-e", fmt.Sprintf("HOMUNCULUS_REPO=%s", repo),
 			"-e", "HOMUNCULUS_SSH_KEY_PRIVATE",

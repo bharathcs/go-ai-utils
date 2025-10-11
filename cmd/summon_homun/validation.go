@@ -23,6 +23,7 @@ func validate() tea.Cmd {
 			"HOMUNCULUS_SSH_KEY_PRIVATE",
 			"HOMUNCULUS_SSH_KEY_PUBLIC",
 			"HOMUNCULUS_GITEA_API_KEY",
+			"HOMUNCULUS_GH_API_KEY",
 		}
 
 		for _, envVar := range requiredEnvVars {

@@ -34,6 +34,7 @@ The following environment variables **must** be set before running:
 - `HOMUNCULUS_SSH_KEY_PRIVATE` - Private SSH key
 - `HOMUNCULUS_SSH_KEY_PUBLIC` - Public SSH key
 - `HOMUNCULUS_GITEA_API_KEY` - Gitea API key
+- `HOMUNCULUS_GH_API_KEY` - Gitea API key
 
 ## Optional Environment Variables
 
@@ -95,6 +96,7 @@ docker run -it --rm \
     --cap-add=NET_RAW \
     -e ANTHROPIC_API_KEY \
     -e HOMUNCULUS_GITEA_API_KEY \
+    -e HOMUNCULUS_GH_API_KEY \
     -e HOMUNCULUS_REPO_URL=$HOMUNCULUS_REPO_URL \
     -e HOMUNCULUS_REPO=$HOMUNCULUS_REPO \
     -e HOMUNCULUS_SSH_KEY_PRIVATE \

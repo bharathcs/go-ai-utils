@@ -91,12 +91,6 @@ func applyDefaults(config *Config, systemUsername string) {
 
 // GetRepoName returns the appropriate repository name based on the remote URL
 func (c *Config) GetRepoName(repoURL, folderName string) string {
-	// Determine if this is a GitHub or Gitea repo based on the URL
-	if repoURL == "" {
-		// Default to Gitea if no URL provided
-		return fmt.Sprintf("%s/%s", c.Gitea.Username, folderName)
-	}
-
 	// Check if URL contains github
 	if contains(repoURL, "github.com") {
 		return fmt.Sprintf("%s/%s", c.GitHub.Username, folderName)
@@ -107,8 +101,8 @@ func (c *Config) GetRepoName(repoURL, folderName string) string {
 		return fmt.Sprintf("%s/%s", c.Gitea.Username, folderName)
 	}
 
-	// Default to Gitea username
-	return fmt.Sprintf("%s/%s", c.Gitea.Username, folderName)
+	// Default to GitHub username
+	return fmt.Sprintf("%s/%s", c.GitHub.Username, folderName)
 }
 
 func contains(s, substr string) bool {

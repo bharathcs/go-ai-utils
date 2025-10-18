@@ -80,7 +80,7 @@ func (m model) View() string {
 
 	case StateRunning:
 		// Split the view into two sections: logs (top) and status (bottom)
-		statusHeight := 4 // Height reserved for status bar at bottom
+		statusHeight := 4                                  // Height reserved for status bar at bottom
 		logsHeight := m.terminalHeight - statusHeight - 10 // Reserve space for header
 
 		if logsHeight < 5 {

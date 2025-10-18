@@ -20,11 +20,23 @@ const defaultInstructionsTemplate = `# Instructions for Homunculus
 [Describe what the final result should look like]
 `
 
+const issueInstructionsTemplate = `# Instructions for Homunculus
+
+Fix the following issue:
+
+%s
+`
+
 func (m *model) loadInstructions() error {
 	content, err := os.ReadFile(m.instructionsPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			m.textarea.SetValue(defaultInstructionsTemplate)
+			// If issue content is provided, use the issue template
+			if m.issueContent != "" {
+				m.textarea.SetValue(fmt.Sprintf(issueInstructionsTemplate, m.issueContent))
+			} else {
+				m.textarea.SetValue(defaultInstructionsTemplate)
+			}
 			return nil
 		}
 		return fmt.Errorf("failed to read instructions file: %w", err)

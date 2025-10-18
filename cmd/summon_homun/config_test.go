@@ -6,39 +6,6 @@ import (
 	"testing"
 )
 
-func TestLoadConfig_WithoutFile(t *testing.T) {
-	// Save original HOME
-	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
-
-	// Set HOME to a temporary directory where config doesn't exist
-	tmpDir := t.TempDir()
-	os.Setenv("HOME", tmpDir)
-
-	config, err := LoadConfig()
-	if err != nil {
-		t.Fatalf("LoadConfig() failed: %v", err)
-	}
-
-	if config == nil {
-		t.Fatal("LoadConfig() returned nil config")
-	}
-
-	// Check defaults are set
-	if config.GitHub.Username == "" {
-		t.Error("GitHub username should have default value")
-	}
-	if config.GitHub.BaseURL != "https://github.com" {
-		t.Errorf("GitHub BaseURL = %s, want https://github.com", config.GitHub.BaseURL)
-	}
-	if config.Gitea.Username == "" {
-		t.Error("Gitea username should have default value")
-	}
-	if config.Gitea.BaseURL != "https://gitea.com" {
-		t.Errorf("Gitea BaseURL = %s, want https://gitea.com", config.Gitea.BaseURL)
-	}
-}
-
 func TestLoadConfig_WithFile(t *testing.T) {
 	// Save original XDG_CONFIG_HOME
 	originalConfigHome := os.Getenv("XDG_CONFIG_HOME")

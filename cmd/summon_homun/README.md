@@ -88,6 +88,27 @@ Simply run the command in any git repository:
 summon_homun
 ```
 
+### Issue Flag
+
+You can automatically fetch and pre-fill issue content from GitHub or Gitea:
+
+```bash
+summon_homun --issue <ISSUE_NUMBER>
+```
+
+This will:
+1. Detect the platform (GitHub or Gitea) from your repository's remote URL
+2. Fetch the issue using `gh` (GitHub CLI) or `tea` (Gitea CLI)
+3. Pre-fill the instructions editor with the issue content
+
+**Prerequisites:**
+- For GitHub: Install and authenticate `gh` CLI (https://cli.github.com/)
+- For Gitea: Install and configure `tea` CLI (https://gitea.com/gitea/tea)
+
+See [ISSUE_FLAG_USAGE.md](./ISSUE_FLAG_USAGE.md) for detailed documentation.
+
+### Interactive Workflow
+
 The application will guide you through:
 
 1. **Validation** - Checks Docker image, environment variables, and git repository

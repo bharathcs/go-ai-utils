@@ -50,6 +50,7 @@ type model struct {
 	terminalHeight   int
 	terminalWidth    int
 	config           *Config
+	issueContent     string
 }
 
 func initialModel() model {

@@ -27,7 +27,7 @@ type GiteaConfig struct {
 	BaseURL  string `yaml:"base_url"`
 }
 
-// LoadConfig loads configuration from ~/.config/homun/config.yml
+// LoadConfig loads configuration from $XDG_CONFIG_HOME/homun/config.yml or ~/.config/homun/config.yml
 // If the file doesn't exist, it returns default configuration
 func LoadConfig() (*Config, error) {
 	currentUser, err := user.Current()
@@ -35,7 +35,12 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to get current user: %w", err)
 	}
 
-	configPath := filepath.Join(currentUser.HomeDir, ".config", "homun", "config.yml")
+	configDir := os.Getenv("XDG_CONFIG_HOME")
+	if configDir == "" {
+		configDir = filepath.Join(currentUser.HomeDir, ".config")
+	}
+
+	configPath := filepath.Join(configDir, "homun", "config.yml")
 
 	// If config file doesn't exist, return defaults
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {

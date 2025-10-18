@@ -6,7 +6,18 @@ import (
 )
 
 func TestGetDefaultRepo(t *testing.T) {
-	repo := getDefaultRepo()
+	config := &Config{
+		GitHub: GitHubConfig{
+			Username: "testuser",
+			BaseURL:  "https://github.com",
+		},
+		Gitea: GiteaConfig{
+			Username: "testuser",
+			BaseURL:  "https://gitea.com",
+		},
+	}
+
+	repo := getDefaultRepo(config)
 	if repo == "" {
 		t.Skip("Skipping test: could not determine default repo")
 	}

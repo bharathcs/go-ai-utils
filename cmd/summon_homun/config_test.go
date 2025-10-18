@@ -40,15 +40,15 @@ func TestLoadConfig_WithoutFile(t *testing.T) {
 }
 
 func TestLoadConfig_WithFile(t *testing.T) {
-	// Save original HOME
-	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
+	// Save original XDG_CONFIG_HOME
+	originalConfigHome := os.Getenv("XDG_CONFIG_HOME")
+	defer os.Setenv("XDG_CONFIG_HOME", originalConfigHome)
 
 	// Create temporary directory with config file
 	tmpDir := t.TempDir()
-	os.Setenv("HOME", tmpDir)
+	os.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	configDir := filepath.Join(tmpDir, ".config", "homun")
+	configDir := filepath.Join(tmpDir, "homun")
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		t.Fatalf("Failed to create config directory: %v", err)
 	}
@@ -117,10 +117,10 @@ func TestGetRepoName(t *testing.T) {
 			want:       "bhcs/myproject",
 		},
 		{
-			name:       "Empty URL defaults to Gitea",
+			name:       "Empty URL defaults to GitHub",
 			repoURL:    "",
 			folderName: "myproject",
-			want:       "bhcs/myproject",
+			want:       "bharathcs/myproject",
 		},
 		{
 			name:       "URL with gitea keyword",

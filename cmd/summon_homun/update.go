@@ -141,7 +141,7 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 	case StateInputRepo:
 		m.repo = strings.TrimSpace(m.inputBuffer)
 		if m.repo == "" {
-			m.repo = getDefaultRepo()
+			m.repo = getDefaultRepo(m.config)
 		}
 		m.inputBuffer = ""
 		m.state = StateInputBranch

@@ -60,7 +60,7 @@ func runDocker(m model) tea.Cmd {
 
 		repo := m.repo
 		if repo == "" {
-			repo = getDefaultRepo()
+			repo = getDefaultRepo(m.config)
 		}
 
 		cmd := exec.Command("docker", "run", "-it", "--rm",

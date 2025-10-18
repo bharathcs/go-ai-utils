@@ -49,6 +49,7 @@ type model struct {
 	dockerOutput     []string
 	terminalHeight   int
 	terminalWidth    int
+	config           *Config
 }
 
 func initialModel() model {

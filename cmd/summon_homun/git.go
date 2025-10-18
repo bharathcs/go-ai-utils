@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
 	"strings"
 )
@@ -27,17 +25,14 @@ func getDefaultRepoURL() string {
 	return strings.TrimSpace(string(output))
 }
 
-func getDefaultRepo() string {
-	currentUser, err := user.Current()
-	if err != nil {
-		return ""
-	}
-
+func getDefaultRepo(config *Config) string {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return ""
 	}
 
 	folderName := filepath.Base(cwd)
-	return fmt.Sprintf("%s/%s", currentUser.Username, folderName)
+	repoURL := getDefaultRepoURL()
+
+	return config.GetRepoName(repoURL, folderName)
 }

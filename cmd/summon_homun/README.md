@@ -43,6 +43,31 @@ These can be set or will be prompted for with defaults:
 - `HOMUNCULUS_REPO_URL` - Git repository URL (default: origin remote URL)
 - `HOMUNCULUS_REPO` - Repository name (default: `$USER/$FOLDER_NAME`)
 
+## Configuration File
+
+You can create a configuration file at `~/.config/homun/config.yml` to customize usernames and base URLs for GitHub and Gitea. If the file doesn't exist, sane defaults will be used.
+
+Example configuration file:
+
+```yaml
+github:
+  username: bharathcs
+  base_url: https://github.com
+
+gitea:
+  username: bhcs
+  base_url: https://gitea.example.com
+```
+
+### Configuration Options
+
+- `github.username`: Your GitHub username (default: system username)
+- `github.base_url`: GitHub base URL (default: https://github.com)
+- `gitea.username`: Your Gitea username (default: system username)
+- `gitea.base_url`: Gitea instance base URL (default: https://gitea.com)
+
+The tool will automatically determine whether to use GitHub or Gitea configuration based on the repository URL. This is particularly useful when you have different usernames for different platforms (e.g., `bharathcs` for GitHub and `bhcs` for Gitea).
+
 ## Installation
 
 ```bash

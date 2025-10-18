@@ -51,11 +51,11 @@ Example configuration file:
 
 ```yaml
 github:
-  username: bharathcs
+  username: janet_doe
   base_url: https://github.com
 
 gitea:
-  username: bhcs
+  username: janet_the_wild
   base_url: https://gitea.example.com
 ```
 
@@ -66,7 +66,7 @@ gitea:
 - `gitea.username`: Your Gitea username (default: system username)
 - `gitea.base_url`: Gitea instance base URL (default: https://gitea.com)
 
-The tool will automatically determine whether to use GitHub or Gitea configuration based on the repository URL. This is particularly useful when you have different usernames for different platforms (e.g., `bharathcs` for GitHub and `bhcs` for Gitea).
+The tool will automatically determine whether to use GitHub or Gitea configuration based on the repository URL. This is particularly useful when you have different usernames for different platforms.
 
 ## Installation
 

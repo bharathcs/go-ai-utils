@@ -34,7 +34,7 @@ func (m model) View() string {
 	case StateInputRepo:
 		b.WriteString(promptStyle.Render("HOMUNCULUS_REPO not set."))
 		b.WriteString("\n")
-		defaultRepo := getDefaultRepo()
+		defaultRepo := getDefaultRepo(m.config)
 		if defaultRepo != "" {
 			b.WriteString(infoStyle.Render(fmt.Sprintf("Default: %s", defaultRepo)))
 			b.WriteString("\n")
@@ -70,6 +70,11 @@ func (m model) View() string {
 		b.WriteString(fmt.Sprintf("  Repository: %s\n", m.repo))
 		b.WriteString(fmt.Sprintf("  Branch: %s\n", m.branch))
 		b.WriteString(fmt.Sprintf("  Branch Directory: %s\n", m.branchDir))
+		b.WriteString("\n")
+		b.WriteString(infoStyle.Render("Usernames:"))
+		b.WriteString("\n")
+		b.WriteString(fmt.Sprintf("  GitHub: %s\n", m.config.GitHub.Username))
+		b.WriteString(fmt.Sprintf("  Gitea: %s\n", m.config.Gitea.Username))
 		b.WriteString("\n")
 		b.WriteString(warningStyle.Render("Ready to summon Homunculus. Continue? (y/n): "))
 

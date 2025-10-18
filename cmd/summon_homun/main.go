@@ -14,8 +14,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	config, err := LoadConfig()
+	if err != nil {
+		fmt.Printf("%s\n", errorStyle.Render(fmt.Sprintf("Error loading config: %v", err)))
+		os.Exit(1)
+	}
+
 	m := initialModel()
 	m.gitRoot = gitRoot
+	m.config = config
 
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
